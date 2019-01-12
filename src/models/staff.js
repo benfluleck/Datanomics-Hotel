@@ -12,4 +12,5 @@ class Staff extends Model {
 }
 
 
+
 export default Staff;
