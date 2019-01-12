@@ -15,7 +15,6 @@ const app = express();
 
 const RedisStore = connectRedis(session);
 
-
 setGlobalMiddleware(app);
 
 isProduction && app.set('trust proxy', 1);

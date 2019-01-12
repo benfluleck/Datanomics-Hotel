@@ -137,7 +137,7 @@ describe('Authentication', () => {
       .then((res) => {
         expect(res.body.message)
           .to
-          .equal('Wrong Credentials');
+          .equal('Wrong credentials Please log in');
         expect(res.status)
           .to
           .equal(401);
@@ -181,7 +181,7 @@ describe('Authentication', () => {
           expect(res.body.status)
             .to
             .equal('error');
-          expect(res.body.message).to.equal('Wrong Credentials')
+          expect(res.body.message).to.equal('Wrong credentials Please log in')
           done();
         });
     }

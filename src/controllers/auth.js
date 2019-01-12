@@ -5,7 +5,8 @@ import Redis from 'ioredis';
 import Staff from '../models/staff'
 import { createConfirmEmailLink } from '../config/createConfirmationLink';
 import { sendConfirmationEmail } from '../email/confirmationEmail/email';
-import { inValidEmailErrorMessages, validateEmail }  from '../validators/validation'
+import { inValidEmailErrorMessages, validateEmail } from '../validators/validation'
+import { attemptSignIn } from '../middleware/checkAuth';
 
 const redis = new Redis()
 
@@ -15,10 +16,9 @@ export const signup = async (req, res) => {
       email, password, firstName, lastName
     } = req.body;
 
-     if (!validateEmail(email)){
-       return res.status(422).json({ status: 'error', message: inValidEmailErrorMessages });
-     }
-
+    if (!validateEmail(email)) {
+      return res.status(422).json({ status: 'error', message: inValidEmailErrorMessages });
+    }
 
     const staffExists = await Staff.query().findOne({ email })
 
@@ -55,20 +55,20 @@ export const signup = async (req, res) => {
           .allowInsert('[id, firstName, lastName, email, password]')
           .insert(newStaff)
 
-          const { password, ...response } = createdStaff
+        const { password, ...response } = createdStaff
 
-          const confirmedUrl = req.protocol + '://' + req.get('host');
+        const confirmedUrl = req.protocol + '://' + req.get('host');
 
-        if(process.env.NODE_ENV !== "test") {
+        if (process.env.NODE_ENV !== "test") {
           const confirmationLink = await createConfirmEmailLink(confirmedUrl, response.id, redis)
           sendConfirmationEmail(response.email, response.firstName, confirmationLink)
         }
 
         res.status(201).json({
-        status: 'success',
-        message: 'Staff Created Successfully',
-        data: response
-      });
+          status: 'success',
+          message: 'Staff Created Successfully',
+          data: response
+        });
       });
     });
   } catch (error) {
@@ -80,35 +80,27 @@ export const signin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const staffExists = await Staff.query().findOne({ email })
+    const staffExists = await attemptSignIn(email, password)
 
-    if (!staffExists) {
-      return res.status(401).json({ status: 'error', message: 'Wrong Credentials'  });
+    if(!staffExists){
+      return res.status(401).json({ status: 'error', message: 'Wrong credentials.Please try again' })
     }
 
+    if (!staffExists.hasConfirmed) {
+      return res.status(403).json({ status: 'error', message: "Please Confirm Your Email Address" });
+    }
 
+    req.session && (req.session.staffId = staffExists.id)
 
-    const isMatch = await bcrypt.compare(password, staffExists.password)
-
-    if (isMatch) {
-
-      if(!staffExists.hasConfirmed) {
-        return res.status(403).json({ status: 'error', message: "Please Confirm Your Email Address" });
+    res.json({
+      status: 'success', message: `Welcome ${staffExists.firstName}`,
+      data: {
+        id: staffExists.id
       }
+    });
 
-      req.session && (req.session.staffId = staffExists.id)
-
-      res.json({
-        status: 'success', message: `Welcome ${staffExists.firstName}`,
-        data: {
-          id: staffExists.id
-        }
-      });
-    } else {
-      return res.status(401).json({ status: 'error', message: 'Wrong Credentials' });
-    }
-  } catch {
-    res.status(400).json({ status: 'error', message: error.message })
+  } catch (error) {
+    res.status(401).json({ status: 'error', message: error.message })
   }
 };
 
