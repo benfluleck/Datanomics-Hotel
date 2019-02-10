@@ -1,4 +1,3 @@
-
 import dotenv from 'dotenv';
 import app from './server';
 
@@ -8,10 +7,8 @@ export const NODE_ENV = process.env.NODE_ENV || 'development';
 
 const port = process.env.PORT || 3000;
 
-
-app.listen(port,
-  () => console.log(`Welcome to Datanomics Hotel Application, listening on ${port}`)
-)
+app
+  .listen(port, () => console.log(`Welcome to Datanomics Hotel Application, listening on ${port}`))
   .on('error', (err) => {
     if (err.syscall !== 'listen') {
       throw error;
@@ -33,5 +30,4 @@ app.listen(port,
     }
   });
 
-
-export default (app);
+export default app;

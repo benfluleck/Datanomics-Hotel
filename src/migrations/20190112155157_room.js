@@ -1,22 +1,22 @@
-
 exports.up = function (knex, Promise) {
   return Promise.all([
     knex.schema.createTable('room', (table) => {
       table.uuid('id').primary();
       table.string('roomNumber');
-      table.uuid('roomTypeId').notNullable().references('id').inTable('roomType');
+      table.uuid('roomType');
     }),
     knex.schema.createTable('roomType', (table) => {
       table.uuid('id').primary();
       table.string('name');
-      table.string('cost');
-      table.uuid('hotelId').notNullable().references('id').inTable('hotel');
+      table.integer('cost');
+      table.integer('hotelIndex');
     }),
-    knex.schema.createTable('hotels', (table) => {
+    knex.schema.createTable('hotel', (table) => {
       table.uuid('id').primary();
       table.string('name');
       table.string('address');
-    }),
+      table.integer('index');
+    })
   ]);
 };
 
@@ -24,6 +24,6 @@ exports.down = function (knex, Promise) {
   return Promise.all([
     knex.schema.dropTable('room'),
     knex.schema.dropTable('roomType'),
-    knex.schema.dropTable('hotels'),
-  ])
+    knex.schema.dropTable('hotel')
+  ]);
 };
