@@ -8,9 +8,6 @@ class Staff extends Model {
   $beforeUpdate() {
     this.updated_at = new Date().toISOString();
   }
-
 }
-
-
 
 export default Staff;

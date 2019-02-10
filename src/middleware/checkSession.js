@@ -1,5 +1,4 @@
-
-const signedIn = (req) => req.session.staffId;
+const signedIn = req => req.session.staffId;
 
 export const ensureSignedin = (req, res, next) => {
   if (!signedIn(req)) {
@@ -8,8 +7,7 @@ export const ensureSignedin = (req, res, next) => {
     });
   }
   next();
-}
-
+};
 
 export const ensureSignedOut = (req, res, next) => {
   if (signedIn(req)) {
@@ -17,6 +15,5 @@ export const ensureSignedOut = (req, res, next) => {
       message: 'You are already signed in'
     });
   }
-  next()
-
+  next();
 };

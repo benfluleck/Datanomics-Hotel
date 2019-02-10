@@ -4,23 +4,22 @@ const fieldLength = {
   password: { max: 30, min: 5 },
   lastName: { max: 30, min: 2 },
   firstName: { max: 30, min: 2 },
-  email: { max: 50, min: 5 },
+  email: { max: 50, min: 5 }
 };
 
 const emailRegex = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"|"_+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/i;
 
-export const validateEmail = (emailAddress) => emailRegex.test(emailAddress);
+export const validateEmail = emailAddress => emailRegex.test(emailAddress);
 
 export const inValidEmailErrorMessages = 'This email address you have provided is invalid';
 
-const modifiedIsLength = (field) => (val) => isLength(val, fieldLength[ field ] || {});
-
+const modifiedIsLength = field => val => isLength(val, fieldLength[field] || {});
 
 export const checkLengthMap = {
-  email: [ modifiedIsLength('email') ],
-  password: [ modifiedIsLength('password') ],
-  firstName: [ modifiedIsLength('firstname'), isAlpha ],
-  lastName: [ modifiedIsLength('lastname'), isAlpha ],
+  email: [modifiedIsLength('email')],
+  password: [modifiedIsLength('password')],
+  firstName: [modifiedIsLength('firstname'), isAlpha],
+  lastName: [modifiedIsLength('lastname'), isAlpha]
 };
 
 export const checkLengthErrorMessages = {

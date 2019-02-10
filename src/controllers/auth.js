@@ -2,13 +2,15 @@ import bcrypt from 'bcryptjs';
 import uuidv4 from 'uuidv4';
 import Redis from 'ioredis';
 
-import Staff from '../models/staff'
+import db from '../models/index';
 import { createConfirmEmailLink } from '../config/createConfirmationLink';
 import { sendConfirmationEmail } from '../email/confirmationEmail/email';
-import { inValidEmailErrorMessages, validateEmail } from '../validators/validation'
+import { inValidEmailErrorMessages, validateEmail } from '../validators/validation';
 import { attemptSignIn } from '../middleware/checkAuth';
 
-const redis = new Redis()
+const Staff = db.Staff;
+
+const redis = new Redis();
 
 export const signup = async (req, res) => {
   try {
@@ -20,21 +22,23 @@ export const signup = async (req, res) => {
       return res.status(422).json({ status: 'error', message: inValidEmailErrorMessages });
     }
 
-    const staffExists = await Staff.query().findOne({ email })
+    const staffExists = await Staff.query().findOne({ email });
 
     if (staffExists) {
-      return res.status(409).json({ status: 'error', message: "This email is already in use" });
+      return res.status(409).json({ status: 'error', message: 'This email is already in use' });
     }
     const data = {
       email,
       password,
       firstName,
-      lastName,
+      lastName
     };
 
     bcrypt.genSalt(10, async (err, salt) => {
       if (err) {
-        return res.status(400).json({ status: 'error', message: 'Password Error, Please try again' });
+        return res
+          .status(400)
+          .json({ status: 'error', message: 'Password Error, Please try again' });
       }
 
       bcrypt.hash(data.password, salt, async (error, hash) => {
@@ -47,21 +51,20 @@ export const signup = async (req, res) => {
           firstName: data.firstName.trim(),
           lastName: data.lastName.trim(),
           email: data.email.trim(),
-          password: data.password,
+          password: data.password
         };
 
-        const createdStaff = await Staff
-          .query()
+        const createdStaff = await Staff.query()
           .allowInsert('[id, firstName, lastName, email, password]')
-          .insert(newStaff)
+          .insert(newStaff);
 
-        const { password, ...response } = createdStaff
+        const { password, ...response } = createdStaff;
 
-        const confirmedUrl = req.protocol + '://' + req.get('host');
+        const confirmedUrl = `${req.protocol}://${req.get('host')}`;
 
-        if (process.env.NODE_ENV !== "test") {
-          const confirmationLink = await createConfirmEmailLink(confirmedUrl, response.id, redis)
-          sendConfirmationEmail(response.email, response.firstName, confirmationLink)
+        if (process.env.NODE_ENV !== 'test') {
+          const confirmationLink = await createConfirmEmailLink(confirmedUrl, response.id, redis);
+          sendConfirmationEmail(response.email, response.firstName, confirmationLink);
         }
 
         res.status(201).json({
@@ -72,7 +75,7 @@ export const signup = async (req, res) => {
       });
     });
   } catch (error) {
-    res.status(400).json({ status: 'error', message: error.message })
+    res.status(400).json({ status: 'error', message: error.message });
   }
 };
 
@@ -80,27 +83,28 @@ export const signin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const staffExists = await attemptSignIn(email, password)
+    const staffExists = await attemptSignIn(email, password);
 
-    if(!staffExists){
-      return res.status(401).json({ status: 'error', message: 'Wrong credentials.Please try again' })
+    if (!staffExists) {
+      return res
+        .status(401)
+        .json({ status: 'error', message: 'Wrong credentials.Please try again' });
     }
 
     if (!staffExists.hasConfirmed) {
-      return res.status(403).json({ status: 'error', message: "Please Confirm Your Email Address" });
+      return res.status(403).json({ status: 'error', message: 'Please Confirm Your Email Address' });
     }
 
-    req.session && (req.session.staffId = staffExists.id)
+    req.session && (req.session.staffId = staffExists.id);
 
     res.json({
-      status: 'success', message: `Welcome ${staffExists.firstName}`,
+      status: 'success',
+      message: `Welcome ${staffExists.firstName}`,
       data: {
         id: staffExists.id
       }
     });
-
   } catch (error) {
-    res.status(401).json({ status: 'error', message: error.message })
+    res.status(401).json({ status: 'error', message: error.message });
   }
 };
-
