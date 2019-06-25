@@ -3,9 +3,9 @@ import session from 'express-session';
 import connectRedis from 'connect-redis';
 import Redis from 'ioredis';
 
-import { indexRouter } from './routes/index';
+import router from './routes';
 import setGlobalMiddleware from './middleware/global';
-import Staff from './models/staff';
+
 
 const redis = new Redis();
 
@@ -38,24 +38,8 @@ app.use(
 
 setGlobalMiddleware(app);
 
-app.use('/api/v1', indexRouter);
+app.use(router);
 
-app.get('/confirm/:id', async (req, res, next) => {
-  const { id } = req.params;
-  const userId = await redis.get(id);
-
-  const staffExists = await Staff.query().findById(userId);
-  if (!staffExists) {
-    return res.status(404).json({ status: 'error', message: 'Invalid confirmation email link' });
-  }
-
-  if (userId) {
-    await Staff.query().patchAndFetchById(userId, { hasConfirmed: true });
-    res.status(200).json({ status: 'success', message: 'Email Confirmation ok' });
-  } else {
-    res.status(400).json({ status: 'error', message: 'Invalid confirmation email link' });
-  }
-});
 
 app.all('*', (req, res) => {
   res.status(404).send('Not Found');

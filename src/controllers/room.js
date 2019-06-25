@@ -2,7 +2,7 @@ import uuidv4 from 'uuidv4';
 
 import db from '../models/index';
 
-const Room = db.Room;
+const { Room } = db;
 
 const addRoom = async (req, res) => {
   try {

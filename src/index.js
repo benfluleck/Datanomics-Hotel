@@ -11,7 +11,7 @@ app
   .listen(port, () => console.log(`Welcome to Datanomics Hotel Application, listening on ${port}`))
   .on('error', (err) => {
     if (err.syscall !== 'listen') {
-      throw error;
+      throw err;
     }
     const bind = typeof port === 'string' ? `Pipe ${port}` : `Port ${port}`;
     // handle specific listen errors with friendly messages
@@ -26,7 +26,7 @@ app
         process.exit(1);
         break;
       default:
-        throw error;
+        throw err;
     }
   });
 

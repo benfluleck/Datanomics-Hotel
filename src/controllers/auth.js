@@ -3,7 +3,7 @@ import uuidv4 from 'uuidv4';
 import Redis from 'ioredis';
 
 import db from '../models/index';
-import { createConfirmEmailLink } from '../config/createConfirmationLink';
+import createConfirmEmailLink  from '../config/createConfirmationLink';
 import { sendConfirmationEmail } from '../email/confirmationEmail/email';
 import { inValidEmailErrorMessages, validateEmail } from '../validators/validation';
 import { attemptSignIn } from '../middleware/checkAuth';
