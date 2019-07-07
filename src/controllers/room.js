@@ -1,6 +1,6 @@
 import uuidv4 from 'uuidv4';
 
-import db from '../models/index';
+import db from '../models';
 
 const { Room } = db;
 

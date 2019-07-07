@@ -2,11 +2,13 @@ import sgMail from '@sendgrid/mail';
 
 import { emailGenerated, mailGenerator } from './config';
 
-const emailBody = (name, room, roomType, hotel, numberOfNights, cost) => mailGenerator.generate(emailGenerated(name, room, roomType, hotel, numberOfNights, cost));
+const emailBody = (name, room, roomType, hotel, numberOfNights, cost) => mailGenerator
+  .generate(emailGenerated(name, room, roomType, hotel, numberOfNights, cost));
 
-const emailText = (name, room, roomType, hotel, numberOfNights, cost) => mailGenerator.generatePlaintext(emailGenerated(name, room, roomType, hotel, numberOfNights, cost));
+const emailText = (name, room, roomType, hotel, numberOfNights, cost) => mailGenerator
+  .generatePlaintext(emailGenerated(name, room, roomType, hotel, numberOfNights, cost));
 
-export const sendConfirmationEmail = async ({
+const sendConfirmationEmail = async ({
   name,
   room,
   roomType,
@@ -26,3 +28,5 @@ export const sendConfirmationEmail = async ({
 
   await sgMail.send(msg);
 };
+
+export default sendConfirmationEmail;

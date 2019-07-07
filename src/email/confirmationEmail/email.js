@@ -6,7 +6,7 @@ const emailBody = (name, url) => mailGenerator.generate(emailGenerated(name, url
 
 const emailText = (name, url) => mailGenerator.generatePlaintext(emailGenerated(name, url));
 
-export const sendConfirmationEmail = async (recipient, name, url) => {
+const sendConfirmationEmail = async (recipient, name, url) => {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
   const msg = {
@@ -19,3 +19,5 @@ export const sendConfirmationEmail = async (recipient, name, url) => {
 
   await sgMail.send(msg);
 };
+
+export default sendConfirmationEmail;

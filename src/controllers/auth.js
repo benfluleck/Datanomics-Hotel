@@ -2,13 +2,13 @@ import bcrypt from 'bcryptjs';
 import uuidv4 from 'uuidv4';
 import Redis from 'ioredis';
 
-import db from '../models/index';
-import createConfirmEmailLink  from '../config/createConfirmationLink';
-import { sendConfirmationEmail } from '../email/confirmationEmail/email';
+import db from '../models';
+import createConfirmEmailLink from '../config/createConfirmationLink';
+import sendConfirmationEmail from '../email/confirmationEmail/email';
 import { inValidEmailErrorMessages, validateEmail } from '../validators/validation';
 import { attemptSignIn } from '../middleware/checkAuth';
 
-const Staff = db.Staff;
+const { Staff } = db;
 
 const redis = new Redis();
 

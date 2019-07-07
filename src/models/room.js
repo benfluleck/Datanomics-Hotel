@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import Model from './config';
 import RoomType from './roomType';
 

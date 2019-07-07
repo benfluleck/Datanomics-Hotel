@@ -1,13 +1,13 @@
 import express from 'express';
 import session from 'express-session';
 import connectRedis from 'connect-redis';
-import Redis from 'ioredis';
+// import Redis from 'ioredis';
 
 import router from './routes';
 import setGlobalMiddleware from './middleware/global';
 
 
-const redis = new Redis();
+// const redis = new Redis();
 
 const isProduction = process.env.NODE_ENV === 'production';
 const SESSION_LIFETIME = 60 * 60 * 1000 * 2;

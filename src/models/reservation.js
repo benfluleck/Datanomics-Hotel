@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import Model from './config';
 import Hotel from './hotels';
 import Customer from './customer';

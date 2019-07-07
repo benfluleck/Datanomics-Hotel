@@ -1,8 +1,8 @@
 import uuidv4 from 'uuidv4';
 
-import db from '../models/index';
+import db from '../models';
 
-const RoomType = db.RoomType;
+const { RoomType } = db;
 
 const addRoomType = async (req, res) => {
   try {

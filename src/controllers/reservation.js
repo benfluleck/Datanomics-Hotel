@@ -1,7 +1,7 @@
 import uuidv4 from 'uuidv4';
 
-import db from '../models/index';
-import { sendConfirmationEmail } from '../email/reservation/email';
+import db from '../models';
+import sendConfirmationEmail from '../email/reservation/email';
 
 const { Reservation } = db;
 
